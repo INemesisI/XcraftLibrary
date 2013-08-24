@@ -1,11 +1,11 @@
-package de.xcraft.INemesisI.Utils.Message;
+package de.xcraft.INemesisI.Library.Message;
 
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import de.xcraft.INemesisI.Utils.XcraftPlugin;
+import de.xcraft.INemesisI.Library.XcraftPlugin;
 
 public class Messenger {
 

@@ -1,4 +1,4 @@
-package de.xcraft.INemesisI.Utils.Command;
+package de.xcraft.INemesisI.Library.Command;
 
 public class XcraftCommandInfo {
 	private final String command;

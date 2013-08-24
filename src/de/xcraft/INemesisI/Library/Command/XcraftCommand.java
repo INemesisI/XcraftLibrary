@@ -1,8 +1,8 @@
-package de.xcraft.INemesisI.Utils.Command;
+package de.xcraft.INemesisI.Library.Command;
 
 import org.bukkit.command.CommandSender;
 
-import de.xcraft.INemesisI.Utils.Manager.XcraftPluginManager;
+import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 
 public abstract class XcraftCommand {
 	private final XcraftCommandInfo commandInfo;

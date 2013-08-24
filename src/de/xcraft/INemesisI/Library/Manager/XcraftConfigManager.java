@@ -1,11 +1,11 @@
-package de.xcraft.INemesisI.Utils.Manager;
+package de.xcraft.INemesisI.Library.Manager;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import de.xcraft.INemesisI.Utils.XcraftPlugin;
+import de.xcraft.INemesisI.Library.XcraftPlugin;
 
 public abstract class XcraftConfigManager {
 	protected final XcraftPlugin plugin;

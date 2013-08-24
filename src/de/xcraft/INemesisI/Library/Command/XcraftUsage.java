@@ -1,10 +1,10 @@
-package de.xcraft.INemesisI.Utils.Command;
+package de.xcraft.INemesisI.Library.Command;
 
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import de.xcraft.INemesisI.Utils.Manager.XcraftPluginManager;
+import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 
 public abstract class XcraftUsage {
 	private final String name;

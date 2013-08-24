@@ -1,4 +1,4 @@
-package de.xcraft.INemesisI.Utils.Manager;
+package de.xcraft.INemesisI.Library.Manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +12,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import de.xcraft.INemesisI.Utils.XcraftPlugin;
-import de.xcraft.INemesisI.Utils.Command.XcraftCommand;
-import de.xcraft.INemesisI.Utils.Command.XcraftCommandInfo;
-import de.xcraft.INemesisI.Utils.Command.XcraftUsage;
-import de.xcraft.INemesisI.Utils.Message.Messenger;
+import de.xcraft.INemesisI.Library.XcraftPlugin;
+import de.xcraft.INemesisI.Library.Command.XcraftCommand;
+import de.xcraft.INemesisI.Library.Command.XcraftCommandInfo;
+import de.xcraft.INemesisI.Library.Command.XcraftUsage;
+import de.xcraft.INemesisI.Library.Message.Messenger;
 
 public abstract class XcraftCommandManager implements CommandExecutor, TabCompleter {
 
@@ -105,7 +105,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 			return true;
 		}
 		String[] params = Arrays.copyOfRange(args, 1, args.length);
-		if (command.getCommandInfo().getUsage().split("<|\\[").length - 1 > params.length) {
+		if (command.getCommandInfo().getUsage().split("<").length - 1 > params.length) {
 			Messenger.sendInfo(sender, ChatColor.RED + "Wrong count of arugments", plugin
 					.getDescription().getName());
 			showUsage(sender, command);
@@ -118,8 +118,8 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	}
 
 	private void showHelp(CommandSender sender, String cmd) {
-		Messenger.sendInfo(sender, ChatColor.GOLD + plugin.getDescription().getVersion()
-				+ " By INemesisI :", plugin.getDescription().getName());
+		Messenger.sendInfo(sender, ChatColor.GOLD + plugin.getDescription().getVersion() + " By "
+				+ plugin.getDescription().getAuthors() + ":", plugin.getDescription().getName());
 		for (XcraftCommand command : commands.values()) {
 			if (cmd.matches(command.getCommandInfo().getCommand())) {
 				this.showUsage(sender, command);
@@ -143,12 +143,14 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	}
 
 	public void onReload(CommandSender sender) {
+		plugin.reloadConfig();
 		plugin.configManager.load();
 		Messenger.sendInfo(sender, "loaded all data from disc!", plugin.getDescription().getName());
 		Messenger.info(plugin.getDescription().getName() + " manual reload!");
 	}
 
 	public void onSave(CommandSender sender) {
+		plugin.reloadConfig();
 		plugin.configManager.save();
 		Messenger.sendInfo(sender, "Saved all data to disc!", plugin.getDescription().getName());
 		Messenger.info(plugin.getDescription().getName() + " manual save!");
@@ -165,13 +167,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 				// Found the right command
 				if (args.length > 1 && args[0].matches(commandInfo.getPattern())) {
 					String[] usages = commandInfo.getUsage().split(" ");
-					String token = args[args.length - 1].trim().toLowerCase(); // what
-																				// the
-																				// user
-																				// typed
-																				// in
-																				// so
-																				// far
+					String token = args[args.length - 1].trim().toLowerCase();
 					getUsageList(sender, list, usages, token, args.length - 2);
 
 					break;

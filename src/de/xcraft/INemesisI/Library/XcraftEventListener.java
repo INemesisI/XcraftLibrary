@@ -1,4 +1,4 @@
-package de.xcraft.INemesisI.Utils;
+package de.xcraft.INemesisI.Library;
 
 import org.bukkit.event.Listener;
 

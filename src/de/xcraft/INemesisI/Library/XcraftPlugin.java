@@ -1,11 +1,11 @@
-package de.xcraft.INemesisI.Utils;
+package de.xcraft.INemesisI.Library;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.xcraft.INemesisI.Utils.Manager.XcraftCommandManager;
-import de.xcraft.INemesisI.Utils.Manager.XcraftConfigManager;
-import de.xcraft.INemesisI.Utils.Manager.XcraftPluginManager;
-import de.xcraft.INemesisI.Utils.Message.Messenger;
+import de.xcraft.INemesisI.Library.Manager.XcraftCommandManager;
+import de.xcraft.INemesisI.Library.Manager.XcraftConfigManager;
+import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
+import de.xcraft.INemesisI.Library.Message.Messenger;
 
 public abstract class XcraftPlugin extends JavaPlugin {
 	public XcraftPluginManager pluginManager;

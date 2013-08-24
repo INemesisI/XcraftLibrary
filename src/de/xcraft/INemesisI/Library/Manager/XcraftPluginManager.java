@@ -1,6 +1,6 @@
-package de.xcraft.INemesisI.Utils.Manager;
+package de.xcraft.INemesisI.Library.Manager;
 
-import de.xcraft.INemesisI.Utils.XcraftPlugin;
+import de.xcraft.INemesisI.Library.XcraftPlugin;
 
 public abstract class XcraftPluginManager {
 
