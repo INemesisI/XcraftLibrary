@@ -1,11 +1,11 @@
 package de.xcraft.INemesisI.Library.Manager;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 import de.xcraft.INemesisI.Library.XcraftPlugin;
+import de.xcraft.INemesisI.Library.Message.Messenger;
 
 public abstract class XcraftConfigManager {
 	protected final XcraftPlugin plugin;
@@ -15,12 +15,8 @@ public abstract class XcraftConfigManager {
 		this.plugin = plugin;
 		File check = new File(plugin.getDataFolder(), "config.yml");
 		if (!check.exists()) {
-			try {
-				check.createNewFile();
-				plugin.saveDefaultConfig();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			Messenger.info("[" + plugin.getName() + "] Creating new config folder");
+			plugin.saveDefaultConfig();
 		}
 		plugin.reloadConfig();
 		this.config = plugin.getConfig();

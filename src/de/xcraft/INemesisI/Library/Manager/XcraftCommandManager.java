@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -55,8 +56,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, org.bukkit.command.Command bcmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command bcmd, String label, String[] args) {
 		// Grab the base and arguments.
 		String cmd = (args.length > 0 ? args[0] : "");
 		// The help command is a little special
@@ -77,8 +77,14 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		// Grab the commands that match the argument.
 		for (Entry<String, XcraftCommand> entry : commands.entrySet()) {
 			if (cmd.matches(entry.getKey())
-					&& cmd.matches(entry.getValue().getCommandInfo().getPattern())) {
-				matches.add(entry.getValue());
+					&& bcmd.getName().equals(entry.getValue().getCommandInfo().getCommand())) {
+				if (entry.getValue().getCommandInfo().getName().equals(cmd)) {
+					matches.clear();
+					matches.add(entry.getValue());
+					break;
+				} else {
+					matches.add(entry.getValue());
+				}
 			}
 		}
 		// If there's more than one match, display them.
