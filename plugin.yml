@@ -1,0 +1,6 @@
+name: XcraftLibrary
+version: 0.2
+author: INemesisI
+
+main: de.xcraft.INemesisI.Library.XcraftPlugin
+load: STARTUP
