@@ -18,6 +18,7 @@ public class XcraftPlugin extends JavaPlugin {
 	public void onDisable() {
 		if (configManager != null)
 			configManager.save();
+		this.saveConfig();
 	}
 
 	@Override

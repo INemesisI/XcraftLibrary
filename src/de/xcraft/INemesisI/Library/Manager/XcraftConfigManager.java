@@ -9,7 +9,7 @@ import de.xcraft.INemesisI.Library.Message.Messenger;
 
 public abstract class XcraftConfigManager {
 	protected final XcraftPlugin plugin;
-	protected final FileConfiguration config;
+	protected FileConfiguration config;
 
 	public XcraftConfigManager(XcraftPlugin plugin) {
 		this.plugin = plugin;

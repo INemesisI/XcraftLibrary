@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
-
 public abstract class XcraftUsage {
 	private final String name;
 	private String alias;
@@ -15,7 +13,11 @@ public abstract class XcraftUsage {
 		this.alias = alias;
 	}
 
-	public abstract List<String> onTabComplete(XcraftPluginManager pManager, List<String> list, CommandSender sender, String token);
+	public abstract boolean validate(String arg);
+
+	public abstract String getFailMessage();
+
+	public abstract List<String> onTabComplete(List<String> list, CommandSender sender, String token);
 
 	public String getName() {
 		return name;
