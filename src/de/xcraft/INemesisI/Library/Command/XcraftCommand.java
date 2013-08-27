@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 
 public abstract class XcraftCommand {
-	private final String command;
+	private final String bukkitCommand;
 	private final String name;
 	private final String pattern;
 	private String usage;
@@ -14,7 +14,7 @@ public abstract class XcraftCommand {
 
 	public XcraftCommand(String command, String name, String pattern, String usage, String desc, String permission) {
 		super();
-		this.command = command;
+		this.bukkitCommand = command;
 		this.name = name;
 		this.pattern = pattern;
 		this.usage = usage;
@@ -40,8 +40,8 @@ public abstract class XcraftCommand {
 		this.desc = desc;
 	}
 
-	public String getCommand() {
-		return command;
+	public String getBukkitCommand() {
+		return bukkitCommand;
 	}
 
 	public String getName() {

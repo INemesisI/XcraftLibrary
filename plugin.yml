@@ -1,6 +1,6 @@
 name: XcraftLibrary
-version: 1.4
+version: 1.5
 author: INemesisI
 
-main: de.xcraft.INemesisI.Library.XcraftPlugin
+main: de.xcraft.INemesisI.Library.XcraftLibrary
 load: STARTUP

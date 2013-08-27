@@ -17,7 +17,7 @@ public abstract class XcraftUsage {
 
 	public abstract String getFailMessage();
 
-	public abstract List<String> onTabComplete(List<String> list, CommandSender sender, String token);
+	public abstract List<String> onTabComplete(List<String> list, CommandSender sender);
 
 	public String getName() {
 		return name;

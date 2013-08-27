@@ -7,27 +7,30 @@ import de.xcraft.INemesisI.Library.Manager.XcraftConfigManager;
 import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 import de.xcraft.INemesisI.Library.Message.Messenger;
 
-public class XcraftPlugin extends JavaPlugin {
-	public XcraftPluginManager pluginManager;
-	public XcraftConfigManager configManager;
-	public XcraftCommandManager commandManager;
-	public XcraftEventListener eventListener;
-	public Messenger messenger = null;
+public abstract class XcraftPlugin extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (configManager != null)
-			configManager.save();
+		if (this.getConfigManager() != null) {
+			this.getConfigManager().save();
+		}
 		this.saveConfig();
 	}
 
 	@Override
 	public void onEnable() {
-		this.messenger = Messenger.getInstance(this);
 		setup();
 	}
 
-	protected void setup() {
+	protected abstract void setup();
 
-	}
+	public abstract XcraftPluginManager getPluginManager();
+
+	public abstract XcraftConfigManager getConfigManager();
+
+	public abstract XcraftCommandManager getCommandManager();
+
+	public abstract XcraftEventListener getEventListener();
+
+	public abstract Messenger getMessenger();
 }

@@ -3,6 +3,7 @@ package de.xcraft.INemesisI.Library.Manager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,10 +34,11 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	protected abstract void registerCommands();
 
 	protected void registerBukkitCommand(String bcmd) {
-		if (plugin.getCommand(bcmd) == null)
+		if (plugin.getCommand(bcmd) == null) {
 			Messenger.severe("The command '" + bcmd + "' was not defined in the plugin.yml!");
-		else
+		} else {
 			plugin.getCommand(bcmd).setExecutor(this);
+		}
 	}
 
 	public void registerCommand(XcraftCommand command) {
@@ -76,7 +78,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		List<XcraftCommand> matches = new ArrayList<XcraftCommand>();
 		// Grab the commands that match the argument.
 		for (Entry<String, XcraftCommand> commandEntry : commands.entrySet()) {
-			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getCommand())) {
+			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getBukkitCommand())) {
 				if (commandEntry.getValue().getName().equals(cmd)) {
 					matches.clear();
 					matches.add(commandEntry.getValue());
@@ -108,13 +110,14 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 			return true;
 		}
 		// Then Check if the sender used the command right
-		if (!validateUsage(sender, command.getUsage().replace("...", "").split(" "), 0, args, 1)) {
+		if (!command.getUsage().equals("") && !validateUsage(sender, command.getUsage().replace("...", "").split(" "), 0, args, 1)) {
 			showUsage(sender, command);
 			return true;
 		}
 		// Otherwise, execute the command!
-		if (!command.execute(plugin.pluginManager, sender, Arrays.copyOfRange(args, 1, args.length)))
+		if (!command.execute(plugin.getPluginManager(), sender, Arrays.copyOfRange(args, 1, args.length))) {
 			showUsage(sender, command);
+		}
 		return true;
 	}
 
@@ -123,25 +126,24 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 			String usageName = commandUsage[c].substring(1, commandUsage[c].length() - 1);
 			if (params.length > p) {
 				if (usages.containsKey(usageName)) {
-					if (usages.get(usageName).validate(params[p])) {
-							return validateUsage(sender, commandUsage, c + 1, params, p + 1);
-					} else {
-						if (commandUsage[c].startsWith("[")) {
+					if (usages.get(usageName).validate(params[p]))
+						return validateUsage(sender, commandUsage, c + 1, params, p + 1);
+					else {
+						if (commandUsage[c].startsWith("["))
 							return validateUsage(sender, commandUsage, c + 1, params, p);
-						} else {
+						else {
 							Messenger.sendInfo(sender, usages.get(usageName).getFailMessage(), plugin.getDescription().getName());
 							return false;
 						}
 					}
 				} else {
-					if (params.equals(usageName)) {
+					if (params.equals(usageName))
 						return validateUsage(sender, commandUsage, c + 1, params, p + 1);
-					}
 				}
 			} else if (usages.containsKey(usageName)) {
 				Messenger.sendInfo(sender, usages.get(usageName).getFailMessage(), plugin.getDescription().getName());
 				return false;
-			} else {
+			} else if (!commandUsage[c].startsWith("[")) {
 				Messenger.sendInfo(sender, ChatColor.RED + "Wrong count of arugments", plugin.getDescription().getName());
 				return false;
 			}
@@ -153,30 +155,29 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		Messenger.sendInfo(sender, ChatColor.GOLD + plugin.getDescription().getVersion() + " By " + plugin.getDescription().getAuthors() + ":",
 				plugin.getDescription().getName());
 		for (XcraftCommand command : commands.values()) {
-			if (cmd.matches(command.getCommand())) {
+			if (cmd.matches(command.getBukkitCommand())) {
 				this.showUsage(sender, command);
 			}
 		}
 	}
 
 	private void showUsage(CommandSender sender, XcraftCommand command) {
-		if (!sender.hasPermission(command.getPermission())) {
+		if (!sender.hasPermission(command.getPermission()))
 			return;
-		}
 		String usage = command.getUsage();
 		for (String usageName : usages.keySet()) {
 			if (usage.contains(usageName)) {
 				usage = usage.replace(usageName, usages.get(usageName).getAlias());
 			}
 		}
-		Messenger.sendInfo(sender, "&8->&a/" + command.getCommand() + " " + command.getName() + " " + usage + " &3- " + command.getDesc(), "");
+		Messenger.sendInfo(sender, "&8->&a/" + command.getBukkitCommand() + " " + command.getName() + " " + usage + " &3- " + command.getDesc(), "");
 	}
 
 	public void onReload(CommandSender sender) {
 		if (sender.hasPermission(plugin.getName() + ".Reload")) {
 			plugin.reloadConfig();
-			plugin.configManager.config = plugin.getConfig();
-			plugin.configManager.load();
+			plugin.getConfigManager().config = plugin.getConfig();
+			plugin.getConfigManager().load();
 			Messenger.sendInfo(sender, "loaded all data from disc!", plugin.getDescription().getName());
 			Messenger.info(plugin.getDescription().getName() + " manual reload!");
 		}
@@ -184,7 +185,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 
 	public void onSave(CommandSender sender) {
 		if (sender.hasPermission(plugin.getName() + ".Save")) {
-			plugin.configManager.save();
+			plugin.getConfigManager().save();
 			plugin.saveConfig();
 			Messenger.sendInfo(sender, "Saved all data to disc!", plugin.getDescription().getName());
 			Messenger.info(plugin.getDescription().getName() + " manual save!");
@@ -193,12 +194,10 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command bcmd, String alias, String[] args) {
-		System.out.println("test");
 		List<String> list = new ArrayList<String>();
-		for (XcraftCommand command : plugin.commandManager.getCommands().values()) {
-			if (bcmd.getName().matches(command.getCommand()) && sender.hasPermission(command.getPermission())) {
+		for (XcraftCommand command : plugin.getCommandManager().getCommands().values()) {
+			if (bcmd.getName().matches(command.getBukkitCommand()) && sender.hasPermission(command.getPermission())) {
 				// Found the right command
-				System.out.println("!");
 				if (args.length > 1 && args[0].matches(command.getPattern())) {
 					String[] usages = command.getUsage().split(" ");
 					String token = args[args.length - 1].trim().toLowerCase();
@@ -214,13 +213,11 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	}
 
 	private List<String> getUsageList(CommandSender sender, List<String> list, String[] usages, String token, int a) {
-		// if the usage ends with '...' it will continously use the usage before
-		// '...' afterwards
-		if (a >= usages.length - 1 && usages[usages.length - 1].equals("...") && !usages[usages.length - 2].startsWith("[")) {
+		// if the usage ends with '...' it will continously use the usage before '...'
+		if (a >= usages.length - 1 && usages[usages.length - 1].equals("...") && !usages[usages.length - 2].startsWith("["))
 			return getUsageList(sender, list, usages, token, usages.length - 2);
-		} else if (a >= usages.length) {
+		else if (a >= usages.length)
 			return list;
-		}
 		if (usages[a].startsWith("<") && usages[a].endsWith(">")) {
 			String usage = usages[a].substring(1, usages[a].length() - 1);
 			if (usage.contains("/")) {
@@ -249,14 +246,21 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 
 	protected List<String> onTabComplete(List<String> list, CommandSender sender, String usage, String token) {
 		boolean foundUsage = false;
+		token = token.toLowerCase();
 		for (String usageName : usages.keySet()) {
 			if (usage.equals(usageName)) {
-				usages.get(usageName).onTabComplete(list, sender, token);
+				usages.get(usageName).onTabComplete(list, sender);
+				for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+					if (!iterator.next().toLowerCase().startsWith(token)) {
+						iterator.remove();
+					}
+				}
 				foundUsage = true;
 			}
 		}
-		if (!foundUsage)
+		if (!foundUsage) {
 			list.add(usage);
+		}
 		return list;
 	}
 

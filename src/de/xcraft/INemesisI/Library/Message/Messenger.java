@@ -26,9 +26,8 @@ public class Messenger {
 	}
 
 	public boolean sendInfo(CommandSender sender, String msg, boolean showPrefix) {
-		if (sender == null || msg == null || msg.equals(" ")) {
+		if (sender == null || msg == null || msg.equals(" "))
 			return false;
-		}
 		msg = msg.replaceAll("&([0-9a-z])", "\u00a7$1");
 		if (showPrefix) {
 			sender.sendMessage(prefix + msg);
@@ -39,11 +38,11 @@ public class Messenger {
 	}
 
 	public static boolean sendInfo(CommandSender sender, String msg, String prefix) {
-		if (sender == null || msg == null || msg.equals(" ")) {
+		if (sender == null || msg == null || msg.equals(" "))
 			return false;
-		}
-		if (!prefix.equals(""))
+		if (!prefix.equals("")) {
 			prefix = ChatColor.DARK_GRAY + "[" + prefix + "] " + ChatColor.WHITE;
+		}
 		msg = msg.replaceAll("&([0-9a-z])", "\u00a7$1");
 		sender.sendMessage(prefix + msg);
 		return true;
