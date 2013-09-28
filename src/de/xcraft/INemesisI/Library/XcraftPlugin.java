@@ -7,6 +7,17 @@ import de.xcraft.INemesisI.Library.Manager.XcraftConfigManager;
 import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 import de.xcraft.INemesisI.Library.Message.Messenger;
 
+//@formatter:off
+/***
+* @author INemesisI
+*     by _____   __                         _      ____
+*       /  _/ | / /__  ____ ___  ___  _____(_)____/  _/ 
+*       / //  |/ / _ \/ __ `__ \/ _ \/ ___/ / ___// /  
+*     _/ // /|  /  __/ / / / / /  __(__  ) (__  )/ /   
+*    /___/_/ |_/\___/_/ /_/ /_/\___/____/_/____/___/                                              
+*/ 
+//@formatter:on
+
 public abstract class XcraftPlugin extends JavaPlugin {
 
 	@Override

@@ -78,7 +78,8 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		List<XcraftCommand> matches = new ArrayList<XcraftCommand>();
 		// Grab the commands that match the argument.
 		for (Entry<String, XcraftCommand> commandEntry : commands.entrySet()) {
-			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getBukkitCommand())) {
+			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getBukkitCommand())
+					&& sender.hasPermission(commandEntry.getValue().getPermission())) {
 				if (commandEntry.getValue().getName().equals(cmd)) {
 					matches.clear();
 					matches.add(commandEntry.getValue());
@@ -104,12 +105,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		}
 		// Grab the only match.
 		XcraftCommand command = matches.get(0);
-		// First check if the sender has permission.
-		if (!sender.hasPermission(command.getPermission())) {
-			Messenger.sendInfo(sender, ChatColor.RED + "You don't have access to this command.", plugin.getDescription().getName());
-			return true;
-		}
-		// Then Check if the sender used the command right
+		// Check if the sender used the command right
 		if (!command.getUsage().equals("") && !validateUsage(sender, command.getUsage().replace("...", "").split(" "), 0, args, 1)) {
 			showUsage(sender, command);
 			return true;
@@ -123,12 +119,13 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 
 	private boolean validateUsage(CommandSender sender, String[] commandUsage, int c, String[] params, int p) {
 		if (commandUsage.length > c) {
+			// <usageName> -> usageName
 			String usageName = commandUsage[c].substring(1, commandUsage[c].length() - 1);
 			if (params.length > p) {
 				if (usages.containsKey(usageName)) {
-					if (usages.get(usageName).validate(params[p]))
+					if (usages.get(usageName).validate(params[p])) {
 						return validateUsage(sender, commandUsage, c + 1, params, p + 1);
-					else {
+					} else {
 						if (commandUsage[c].startsWith("["))
 							return validateUsage(sender, commandUsage, c + 1, params, p);
 						else {
@@ -140,11 +137,11 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 					if (params.equals(usageName))
 						return validateUsage(sender, commandUsage, c + 1, params, p + 1);
 				}
-			} else if (usages.containsKey(usageName)) {
-				Messenger.sendInfo(sender, usages.get(usageName).getFailMessage(), plugin.getDescription().getName());
-				return false;
 			} else if (!commandUsage[c].startsWith("[")) {
-				Messenger.sendInfo(sender, ChatColor.RED + "Wrong count of arugments", plugin.getDescription().getName());
+				if (usages.containsKey(usageName))
+					Messenger.sendInfo(sender, usages.get(usageName).getFailMessage(), plugin.getDescription().getName());
+				else
+					Messenger.sendInfo(sender, ChatColor.RED + "Wrong count of arugments", plugin.getDescription().getName());
 				return false;
 			}
 		}

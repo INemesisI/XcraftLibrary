@@ -2,6 +2,7 @@ package de.xcraft.INemesisI.Library.Command;
 
 import org.bukkit.command.CommandSender;
 
+import de.xcraft.INemesisI.Library.Manager.XcraftCommandManager;
 import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 
 public abstract class XcraftCommand {
@@ -13,7 +14,6 @@ public abstract class XcraftCommand {
 	private final String permission;
 
 	public XcraftCommand(String command, String name, String pattern, String usage, String desc, String permission) {
-		super();
 		this.bukkitCommand = command;
 		this.name = name;
 		this.pattern = pattern;
@@ -22,6 +22,9 @@ public abstract class XcraftCommand {
 		this.permission = permission;
 	}
 
+	public void addCommandShortcut(XcraftCommandManager manager, String shortcut) {
+
+	}
 	public abstract boolean execute(XcraftPluginManager manager, CommandSender sender, String[] args);
 
 	public String getUsage() {
