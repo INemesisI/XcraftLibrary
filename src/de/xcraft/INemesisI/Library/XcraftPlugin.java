@@ -9,13 +9,13 @@ import de.xcraft.INemesisI.Library.Message.Messenger;
 
 //@formatter:off
 /***
-* @author INemesisI
-*     by _____   __                         _      ____
-*       /  _/ | / /__  ____ ___  ___  _____(_)____/  _/ 
-*       / //  |/ / _ \/ __ `__ \/ _ \/ ___/ / ___// /  
-*     _/ // /|  /  __/ / / / / /  __(__  ) (__  )/ /   
-*    /___/_/ |_/\___/_/ /_/ /_/\___/____/_/____/___/                                              
-*/ 
+ * @author INemesisI
+ *     by _____   __                         _      ____
+ *       /  _/ | / /__  ____ ___  ___  _____(_)____/  _/
+ *       / //  |/ / _ \/ __ `__ \/ _ \/ ___/ / ___// /
+ *     _/ // /|  /  __/ / / / / /  __(__  ) (__  )/ /
+ *    /___/_/ |_/\___/_/ /_/ /_/\___/____/_/____/___/
+ */
 //@formatter:on
 
 public abstract class XcraftPlugin extends JavaPlugin {
@@ -25,11 +25,21 @@ public abstract class XcraftPlugin extends JavaPlugin {
 		if (this.getConfigManager() != null) {
 			this.getConfigManager().save();
 		}
-		this.saveConfig();
 	}
 
 	@Override
 	public void onEnable() {
+		String[] version = this.getServer().getPluginManager().getPlugin("XcraftLibrary").getDescription().getVersion().split("\\.");
+		String[] required = (this.getDescription().getDescription().split("v")[1]).split("\\.");
+		for (int i = 0; i < 3; i++) {
+			if (Integer.parseInt(version[i]) < Integer.parseInt(required[i])) {
+				Messenger.severe("-------------------------------------------------------------------");
+				Messenger.severe(this.getName() + ": The version of XcraftLibrary is not compatible with the Plugin version!");
+				Messenger.severe(this.getDescription().getDescription());
+				Messenger.severe("-------------------------------------------------------------------");
+				return;
+			}
+		}
 		setup();
 	}
 

@@ -14,6 +14,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import de.xcraft.INemesisI.Library.XcraftPlugin;
 import de.xcraft.INemesisI.Library.Command.XcraftCommand;
@@ -23,12 +24,16 @@ import de.xcraft.INemesisI.Library.Message.Messenger;
 public abstract class XcraftCommandManager implements CommandExecutor, TabCompleter {
 
 	protected final XcraftPlugin plugin;
-	protected final Map<String, XcraftCommand> commands = new TreeMap<String, XcraftCommand>();
-	protected final Map<String, XcraftUsage> usages = new HashMap<String, XcraftUsage>();
+	private final Map<String, XcraftCommand> commands = new TreeMap<String, XcraftCommand>();
+	private final Map<String, XcraftUsage> usages = new HashMap<String, XcraftUsage>();
 
 	public XcraftCommandManager(XcraftPlugin plugin) {
 		this.plugin = plugin;
 		registerCommands();
+	}
+
+	public XcraftPlugin getPlugin() {
+		return plugin;
 	}
 
 	protected abstract void registerCommands();
@@ -70,16 +75,20 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 			onSave(sender);
 			return true;
 		}
+		if (cmd.equals("load")) {
+			onLoad(sender);
+			return true;
+		}
 		if (cmd.equals("reload")) {
-			onReload(sender);
+			onSave(sender);
+			onLoad(sender);
 			return true;
 		}
 		// Get all commands that match the base.
 		List<XcraftCommand> matches = new ArrayList<XcraftCommand>();
 		// Grab the commands that match the argument.
 		for (Entry<String, XcraftCommand> commandEntry : commands.entrySet()) {
-			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getBukkitCommand())
-					&& sender.hasPermission(commandEntry.getValue().getPermission())) {
+			if (cmd.matches(commandEntry.getKey()) && bcmd.getName().equals(commandEntry.getValue().getBukkitCommand())) {
 				if (commandEntry.getValue().getName().equals(cmd)) {
 					matches.clear();
 					matches.add(commandEntry.getValue());
@@ -105,6 +114,11 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		}
 		// Grab the only match.
 		XcraftCommand command = matches.get(0);
+		// Check if the user has permission
+		if (!sender.hasPermission(command.getPermission())) {
+			Messenger.sendInfo(sender, ChatColor.RED + "You dont have permission to this command!", plugin.getDescription().getName());
+			return true;
+		}
 		// Check if the sender used the command right
 		if (!command.getUsage().equals("") && !validateUsage(sender, command.getUsage().replace("...", "").split(" "), 0, args, 1)) {
 			showUsage(sender, command);
@@ -149,8 +163,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	}
 
 	private void showHelp(CommandSender sender, String cmd) {
-		Messenger.sendInfo(sender, ChatColor.GOLD + plugin.getDescription().getVersion() + " By " + plugin.getDescription().getAuthors() + ":",
-				plugin.getDescription().getName());
+		Messenger.sendInfo(sender, ChatColor.GOLD + plugin.getDescription().getVersion() + " By " + plugin.getDescription().getAuthors() + ":", plugin.getDescription().getName());
 		for (XcraftCommand command : commands.values()) {
 			if (cmd.matches(command.getBukkitCommand())) {
 				this.showUsage(sender, command);
@@ -167,15 +180,15 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 				usage = usage.replace(usageName, usages.get(usageName).getAlias());
 			}
 		}
-		Messenger.sendInfo(sender, "&8->&a/" + command.getBukkitCommand() + " " + command.getName() + " " + usage + " &3- " + command.getDesc(), "");
+		Messenger.sendInfo(sender, "&8->&a/" + command.getBukkitCommand() + " " + command.getName() + " " + (usage.isEmpty() ? "" : usage + " ") + "&3- " + command.getDesc(), "");
 	}
 
-	public void onReload(CommandSender sender) {
+	public void onLoad(CommandSender sender) {
 		if (sender.hasPermission(plugin.getName() + ".Reload")) {
 			plugin.reloadConfig();
 			plugin.getConfigManager().config = plugin.getConfig();
 			plugin.getConfigManager().load();
-			Messenger.sendInfo(sender, "loaded all data from disc!", plugin.getDescription().getName());
+			Messenger.sendInfo(sender, "&aLoaded all data from disc!", plugin.getDescription().getName());
 			Messenger.info(plugin.getDescription().getName() + " manual reload!");
 		}
 	}
@@ -184,7 +197,7 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 		if (sender.hasPermission(plugin.getName() + ".Save")) {
 			plugin.getConfigManager().save();
 			plugin.saveConfig();
-			Messenger.sendInfo(sender, "Saved all data to disc!", plugin.getDescription().getName());
+			Messenger.sendInfo(sender, "&aSaved all data to disc!", plugin.getDescription().getName());
 			Messenger.info(plugin.getDescription().getName() + " manual save!");
 		}
 	}
@@ -244,6 +257,13 @@ public abstract class XcraftCommandManager implements CommandExecutor, TabComple
 	protected List<String> onTabComplete(List<String> list, CommandSender sender, String usage, String token) {
 		boolean foundUsage = false;
 		token = token.toLowerCase();
+		if (usage.equals("Name")) {
+			for (Player player : plugin.getServer().getOnlinePlayers()) {
+				if (player.getName().startsWith(token))
+				list.add(player.getName());
+			}
+			return list;
+		}
 		for (String usageName : usages.keySet()) {
 			if (usage.equals(usageName)) {
 				usages.get(usageName).onTabComplete(list, sender);

@@ -6,6 +6,7 @@ import de.xcraft.INemesisI.Library.Manager.XcraftCommandManager;
 import de.xcraft.INemesisI.Library.Manager.XcraftPluginManager;
 
 public abstract class XcraftCommand {
+	private final XcraftCommandManager cManager;
 	private final String bukkitCommand;
 	private final String name;
 	private final String pattern;
@@ -13,7 +14,8 @@ public abstract class XcraftCommand {
 	private String desc;
 	private final String permission;
 
-	public XcraftCommand(String command, String name, String pattern, String usage, String desc, String permission) {
+	public XcraftCommand(XcraftCommandManager cManager, String command, String name, String pattern, String usage, String desc, String permission) {
+		this.cManager = cManager;
 		this.bukkitCommand = command;
 		this.name = name;
 		this.pattern = pattern;
@@ -23,9 +25,15 @@ public abstract class XcraftCommand {
 	}
 
 	public void addCommandShortcut(XcraftCommandManager manager, String shortcut) {
-
+		return;
 	}
+
 	public abstract boolean execute(XcraftPluginManager manager, CommandSender sender, String[] args);
+
+	protected void sendInfo(CommandSender sender, String msg, boolean showPrefix) {
+		cManager.getPlugin().getMessenger().sendInfo(sender, msg, showPrefix);
+		return;
+	}
 
 	public String getUsage() {
 		return usage;
